@@ -25,3 +25,26 @@ def api_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET','PUT','DELETE'])
+def api_detail(request,pk):
+    try:
+        showApi = ApiModel.objects.get(pk=pk)
+
+    except ApiModel.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serialiser = ApiSerializers(showApi)
+        return Response(serialiser.data)
+    
+    elif request.method == 'PUT':
+        serialiser = ApiSerializers(showApi,data=request.data)
+        if serialiser.is_valid():
+            serialiser.save()
+            return Response(serialiser.data)
+        return Response(serialiser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        showApi.delete
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
